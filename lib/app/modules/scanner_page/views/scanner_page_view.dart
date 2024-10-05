@@ -2,18 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-
-import '../../../resources/text_style.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/scanner_page_controller.dart';
-
-// import 'dart:math';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:mobile_scanner/mobile_scanner.dart';
-// import '../../../resources/text_style.dart';
-// import '../../../routes/app_pages.dart';
-// import '../controllers/scanner_page_controller.dart';
 
 class ScannerPageView extends GetView<ScannerPageController> {
   const ScannerPageView({super.key});
