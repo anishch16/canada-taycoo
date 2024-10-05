@@ -25,12 +25,12 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final barcodeSvg = buildBarcodeSvg(
       Barcode.code128(),
-      '$orderText$itemText',
+      orderText,
       width: 200,
       height: 200,
     );
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(),
