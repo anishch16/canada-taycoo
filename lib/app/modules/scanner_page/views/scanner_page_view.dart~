@@ -38,7 +38,7 @@ class ScannerPageView extends GetView<ScannerPageController> {
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15)), color: Colors.orange),
             child: Text(
-              "Office Furniture Manufacturer",
+              "Office furniture manufacturer",
               style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.white),
             ),
           ),

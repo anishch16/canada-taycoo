@@ -28,6 +28,7 @@ class SigninView extends GetView<SigninController> {
               child: Column(
                 children: [
                   TextFormField(
+                    cursorColor: Colors.orange,
                     controller: controller.emailController,
                     keyboardType: TextInputType.emailAddress,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -51,6 +52,7 @@ class SigninView extends GetView<SigninController> {
                   const SizedBox(height: 24),
                   Obx(() {
                     return TextFormField(
+                      cursorColor: Colors.orange,
                       controller: controller.passwordController,
                       obscuringCharacter: "*",
                       obscureText: controller.passwordVisible.value,
