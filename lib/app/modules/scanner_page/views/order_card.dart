@@ -29,85 +29,81 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final barcodeSvg = buildBarcodeSvg(
-      Barcode.code128(),
-      '$orderText$itemText',
-      width: 200,
-      height: 200,
-    );
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Stack(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                "Order #$orderText",
+                style: AppTextTheme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
+              ),
+              Text(
+                "Item #$itemText",
+                style: AppTextTheme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: 8),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Order #$orderText",
-                    style: AppTextTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                    descriptionText,
+                    style: AppTextTheme.textTheme.labelMedium,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        smallText,
+                        style: AppTextTheme.textTheme.labelMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(" - ", style: AppTextTheme.textTheme.labelMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
+                      Text(
+                        pickArea,
+                        style: AppTextTheme.textTheme.labelMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   Text(
-                    "Item #$itemText",
-                    style: AppTextTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                    "PLANT DATE $plantDateText",
+                    style: AppTextTheme.textTheme.labelLarge,
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 8),
+                  Text(
+                    "____/$quantity QTY ____/____ BOXES",
+                    style: AppTextTheme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w900),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-              SvgPicture.string(
-                barcodeSvg,
-                width: 50,
-                height: 50,
-              ),
-              // Icon(
-              //   Icons.qr_code_2,
-              //   size: 50,
-              // ),
+
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            descriptionText,
-            style: AppTextTheme.textTheme.titleMedium,
-            maxLines: 2,
-            textAlign: TextAlign.center,
+        ),
+        Positioned(
+          right: -20,
+          top: 5,
+          child: SvgPicture.string(
+            buildBarcodeSvg(Barcode.qrCode(), '$orderText|$itemText'),
+            height: 40,
+            width: 40,
           ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                smallText,
-                style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              Text(" - ", style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
-              Text(
-                pickArea,
-                style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "PLANT DATE $plantDateText",
-            style: AppTextTheme.textTheme.labelLarge,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "____/$quantity QTY ____/____ BOXES",
-            style: AppTextTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
-            textAlign: TextAlign.center,
-          )
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
