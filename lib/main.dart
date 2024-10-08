@@ -15,7 +15,7 @@ void main() {
     GetMaterialApp(
       title: "Application",
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
         scaffoldBackgroundColor: Colors.white,
       ),
       initialRoute: AppPages.INITIAL,

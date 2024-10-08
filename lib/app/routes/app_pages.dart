@@ -1,7 +1,4 @@
 import 'package:get/get.dart';
-
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
 import '../modules/scanner_page/bindings/scanner_page_binding.dart';
 import '../modules/scanner_page/views/scanner_page_view.dart';
 import '../modules/signin/bindings/signin_binding.dart';
@@ -15,11 +12,6 @@ class AppPages {
   static const INITIAL = Routes.SIGNIN;
 
   static final routes = [
-    GetPage(
-      name: _Paths.HOME,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
-    ),
     GetPage(
       name: _Paths.SCANNER_PAGE,
       page: () => const ScannerPageView(),

@@ -5,7 +5,7 @@ class AppTextTheme {
   AppTextTheme._();
 
   static TextTheme textTheme = TextTheme(
-    displayLarge: GoogleFonts.manrope(
+    displayLarge: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 32,
@@ -13,7 +13,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    displayMedium: GoogleFonts.manrope(
+    displayMedium: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 24,
@@ -21,7 +21,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    displaySmall: GoogleFonts.manrope(
+    displaySmall: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 20,
@@ -29,7 +29,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    headlineLarge: GoogleFonts.manrope(
+    headlineLarge: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 20,
@@ -37,7 +37,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    headlineMedium: GoogleFonts.manrope(
+    headlineMedium: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 18,
@@ -45,7 +45,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    headlineSmall: GoogleFonts.manrope(
+    headlineSmall: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 18,
@@ -53,7 +53,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    titleLarge: GoogleFonts.manrope(
+    titleLarge: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 16,
@@ -61,7 +61,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    titleMedium: GoogleFonts.manrope(
+    titleMedium: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 16,
@@ -69,7 +69,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    titleSmall: GoogleFonts.manrope(
+    titleSmall: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 14,
@@ -77,7 +77,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    bodyLarge: GoogleFonts.manrope(
+    bodyLarge: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 14,
@@ -85,7 +85,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    bodyMedium: GoogleFonts.manrope(
+    bodyMedium: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 14,
@@ -93,7 +93,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    bodySmall: GoogleFonts.manrope(
+    bodySmall: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 12,
@@ -101,7 +101,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    labelLarge: GoogleFonts.manrope(
+    labelLarge: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 12,
@@ -109,7 +109,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    labelMedium: GoogleFonts.manrope(
+    labelMedium: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 10,
@@ -117,7 +117,7 @@ class AppTextTheme {
         overflow: TextOverflow.ellipsis,
       ),
     ),
-    labelSmall: GoogleFonts.manrope(
+    labelSmall: GoogleFonts.nanumMyeongjo(
       textStyle: const TextStyle(
         letterSpacing: 0.72,
         fontSize: 10,

@@ -13,6 +13,9 @@ class OrderCard extends StatelessWidget {
     required this.descriptionText,
     required this.colorText,
     required this.plantDateText,
+    required this.smallText,
+    required this.pickArea,
+    required this.quantity,
   });
 
   final String orderText;
@@ -20,6 +23,9 @@ class OrderCard extends StatelessWidget {
   final String descriptionText;
   final String colorText;
   final String plantDateText;
+  final String smallText;
+  final String pickArea;
+  final String quantity;
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +50,11 @@ class OrderCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Order $orderText",
+                    "Order #$orderText",
                     style: AppTextTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
                   ),
                   Text(
-                    "Item $itemText",
+                    "Item #$itemText",
                     style: AppTextTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
                   ),
                 ],
@@ -64,26 +70,39 @@ class OrderCard extends StatelessWidget {
               // ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             descriptionText,
             style: AppTextTheme.textTheme.titleMedium,
             maxLines: 2,
             textAlign: TextAlign.center,
           ),
-          Text(
-            colorText,
-            style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                smallText,
+                style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              Text(" - ", style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
+              Text(
+                pickArea,
+                style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
+          const SizedBox(height: 8),
           Text(
             "PLANT DATE $plantDateText",
             style: AppTextTheme.textTheme.labelLarge,
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            "____/999 QTY ____/____ BOXES",
+            "____/$quantity QTY ____/____ BOXES",
             style: AppTextTheme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
             textAlign: TextAlign.center,
           )
