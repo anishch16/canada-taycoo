@@ -13,9 +13,9 @@ class OrderCard extends StatelessWidget {
     required this.descriptionText,
     required this.colorText,
     required this.plantDateText,
-    required this.quantity,
     required this.smallText,
     required this.pickArea,
+    required this.quantity,
   });
 
   final String orderText;
@@ -23,20 +23,20 @@ class OrderCard extends StatelessWidget {
   final String descriptionText;
   final String colorText;
   final String plantDateText;
-  final String quantity;
   final String smallText;
   final String pickArea;
+  final String quantity;
 
   @override
   Widget build(BuildContext context) {
     final barcodeSvg = buildBarcodeSvg(
       Barcode.code128(),
-      orderText,
+      '$orderText$itemText',
       width: 200,
       height: 200,
     );
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(),
@@ -83,21 +83,18 @@ class OrderCard extends StatelessWidget {
             children: [
               Text(
                 smallText,
-                style: AppTextTheme.textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              Text(
-                " - ",
-                style: AppTextTheme.textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
+              Text(" - ", style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold)),
               Text(
                 pickArea,
-                style: AppTextTheme.textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.green),
+                style: AppTextTheme.textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ],
           ),
+          const SizedBox(height: 8),
           Text(
             "PLANT DATE $plantDateText",
             style: AppTextTheme.textTheme.labelLarge,

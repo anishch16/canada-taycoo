@@ -1,12 +1,9 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pulsator/pulsator.dart';
-
-// import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../resources/text_style.dart';
-import '../../home/views/order_card.dart';
 import '../controllers/scanner_page_controller.dart';
+import 'order_card.dart';
 
 class ScannerPageView extends GetView<ScannerPageController> {
   const ScannerPageView({super.key});
@@ -30,6 +27,7 @@ class ScannerPageView extends GetView<ScannerPageController> {
       ),
       appBar: AppBar(
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
         leadingWidth: 100,
         actions: [
           Container(
@@ -173,7 +171,7 @@ class ScannerPageView extends GetView<ScannerPageController> {
                                       foregroundColor: Colors.white,
                                       shape: const StadiumBorder(),
                                     ),
-                                    child: const Text("Download"),
+                                    child: Text("Download", style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.white)),
                                   ),
                                 ],
                               ),
