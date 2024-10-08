@@ -98,7 +98,6 @@ class OrderCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
           Text(
             "PLANT DATE $plantDateText",
             style: AppTextTheme.textTheme.labelLarge,

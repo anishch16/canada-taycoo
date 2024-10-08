@@ -86,13 +86,16 @@ class HomeView extends GetView<HomeController> {
                     child: Column(
                       children: [
                         RepaintBoundary(
-                          key:controller.globalKeys[index],
+                          key: controller.globalKeys[index],
                           child: OrderCard(
+                            quantity: "999",
                             orderText: controller.orders[index],
                             itemText: controller.items[index],
                             descriptionText: "DESCRIPTION LONG LOREM IPSUM DOLOR SIT MET CONSECTETUR ADIPISSED DO EIUS",
                             colorText: "COLOR",
                             plantDateText: "1985-00-99",
+                            smallText: 'smallText',
+                            pickArea: 'pickArea',
                           ),
                         ),
                         SizedBox(height: 16),
