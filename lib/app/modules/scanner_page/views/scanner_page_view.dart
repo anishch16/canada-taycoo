@@ -163,7 +163,7 @@ class ScannerPageView extends GetView<ScannerPageController> {
                                   const SizedBox(height: 16),
                                   ElevatedButton(
                                     onPressed: () {
-                                      controller.capturePng(0);
+                                      controller.capturePng(index);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       elevation: 0,
