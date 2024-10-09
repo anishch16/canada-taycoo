@@ -58,7 +58,11 @@ class ScannerPageView extends GetView<ScannerPageController> {
                     child: SizedBox(
                       height: 50,
                       child: TextFormField(
+                        controller: controller.searchController,
                         cursorColor: Colors.orange,
+                        onChanged: (value) {
+                          controller.searchController.text = value;
+                        },
                         decoration: InputDecoration(
                             floatingLabelBehavior: FloatingLabelBehavior.never,
                             suffixIcon: const Padding(
@@ -90,98 +94,129 @@ class ScannerPageView extends GetView<ScannerPageController> {
                     ),
                   ),
                   const SizedBox(width: 16.0),
-                  Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(25),
+                  GestureDetector(
+                    onTap: () {
+                      controller.searchController.text.isNotEmpty
+                          ? controller.getCardList(orderId: "?search=${controller.searchController.text}")
+                          : null;
+                    },
+                    child: Container(
+                      height: 50,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Center(
+                          child: Text(
+                        "Search",
+                        style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.white),
+                      )),
                     ),
-                    child: Center(
-                        child: Text(
-                      "Search",
-                      style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.white),
-                    )),
                   )
                 ],
               ),
             ),
-            controller.responseModelData.value?.data == null
-                ? Center(
-                    child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 100),
-                        Image.asset(
-                          "assets/png/scanning.png",
-                          height: 200,
-                        ),
-                        Text(
-                          "Use Search or Scanner to get the ordered card details",
-                          style: AppTextTheme.textTheme.displayMedium?.copyWith(color: Colors.orange),
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
-                        )
-                      ],
-                    ),
-                  ))
-                : Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: controller.responseModelData.value?.data?.items?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return Column(
+            controller.isLoading.value
+                ? const SizedBox(height: 400, child: Center(child: CircularProgressIndicator()))
+                : controller.responseModelData.value?.results == null
+                    ? Center(
+                        child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.shade50,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  RepaintBoundary(
-                                    key: controller.globalKeys[index],
-                                    child: OrderCard(
-                                      pickArea: controller.responseModelData.value?.data?.items?[index].pickArea?.pickAreaName ?? "",
-                                      smallText: controller.responseModelData.value?.data?.items?[index].smallText ?? "smallText",
-                                      quantity: controller.responseModelData.value?.data?.items?[index].quantity ?? "quantity",
-                                      orderText: controller.responseModelData.value?.data?.orderId ?? "orderId",
-                                      itemText: controller.responseModelData.value?.data?.items?[index].itemId ?? "itemID",
-                                      descriptionText: controller.responseModelData.value?.data?.items?[index].itemDescription ?? "description",
-                                      colorText: "COLOR",
-                                      plantDateText: controller.responseModelData.value?.data?.planeDate ?? "1985-00-99",
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      controller.capturePng(index);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      elevation: 0,
-                                      backgroundColor: Colors.orange,
-                                      foregroundColor: Colors.white,
-                                      shape: const StadiumBorder(),
-                                    ),
-                                    child: Text("Download", style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.white)),
-                                  ),
-                                ],
-                              ),
+                            const SizedBox(height: 100),
+                            Image.asset(
+                              "assets/png/scanning.png",
+                              height: 200,
                             ),
-                            if (controller.responseModelData.value?.data?.items?.length == (index + 1)) const SizedBox(height: 200)
+                            Text(
+                              "Use Search or Scanner to get the ordered card details",
+                              style: AppTextTheme.textTheme.displayMedium?.copyWith(color: Colors.orange),
+                              textAlign: TextAlign.center,
+                              maxLines: 3,
+                            )
                           ],
-                        );
-                      },
-                    ),
+                        ),
+                      ))
+            : (controller.responseModelData.value?.results ?? []).isEmpty ?
+            Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 100),
+                      Image.asset(
+                        "assets/png/no_data.png",
+                        height: 200,
+                      ),
+                      Text(
+                        "No data found",
+                        style: AppTextTheme.textTheme.displayMedium?.copyWith(color: Colors.orange),
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                      )
+                    ],
                   ),
+                ))
+                    : Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: controller.responseModelData.value?.results?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade50,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      RepaintBoundary(
+                                        key: controller.globalKeys[index],
+                                        child: OrderCard(
+                                          pickArea:
+                                              controller.responseModelData.value?.results?[index].item?.pickArea?.pickAreaName ?? "pickAreaName",
+                                          smallText: controller.responseModelData.value?.results?[index].item?.smallText ?? "smallText",
+                                          quantity: controller.responseModelData.value?.results?[index].quantity.toString() ?? "quantity",
+                                          orderText: controller.responseModelData.value?.results?[index].orderHeader?.orderNumber ?? "orderId",
+                                          itemText: controller.responseModelData.value?.results?[index].item?.itemNumber ?? "itemID",
+                                          descriptionText: controller.responseModelData.value?.results?[index].item?.itemDescription ?? "description",
+                                          colorText: "COLOR",
+                                          plantDateText: controller.responseModelData.value?.results?[index].orderHeader?.planDate ?? "1985-00-99",
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          controller.capturePng(index);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          backgroundColor: Colors.orange,
+                                          foregroundColor: Colors.white,
+                                          shape: const StadiumBorder(),
+                                        ),
+                                        child: Text("Download", style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.white)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (controller.responseModelData.value?.results?.length == (index + 1)) const SizedBox(height: 200)
+                              ],
+                            );
+                          },
+                        ),
+                      ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ui' as ui;
 
 import 'package:barcode_scan2/barcode_scan2.dart';
@@ -10,7 +11,6 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../data/remote/api_client.dart';
-import '../../../data/remote/api_urls.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../data/remote/models/data_success_model.dart';
@@ -65,7 +65,8 @@ class ScannerPageController extends GetxController {
   var useAutoFocus = true.obs;
   var autoEnableFlash = false.obs;
   var globalKeys = [].obs;
-
+  var isLoading = false.obs;
+  final TextEditingController searchController = TextEditingController();
   final flashOnController = TextEditingController(text: 'Flash on');
   final flashOffController = TextEditingController(text: 'Flash off');
   final cancelController = TextEditingController(text: 'Cancel');
@@ -77,7 +78,7 @@ class ScannerPageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    testGetCardList();
+    // testGetCardList();
     // globalKeys.clear();
     // for (var i = 0; i < 1; i++) {
     //   globalKeys.add(GlobalKey());
@@ -108,6 +109,7 @@ class ScannerPageController extends GetxController {
         ),
       );
       scanResult.value = result;
+      getCardList(orderId: scanResult.value!.rawContent.isNotEmpty ? "?search=${scanResult.value!.rawContent}" : "");
     } on PlatformException catch (e) {
       scanResult.value = ScanResult(
         rawContent: e.code == BarcodeScanner.cameraAccessDenied ? 'The user did not grant the camera permission!' : 'Unknown error: $e',
@@ -124,10 +126,8 @@ class ScannerPageController extends GetxController {
   Future<void> capturePng(int index) async {
     try {
       await requestStoragePermission();
-
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         RenderRepaintBoundary? boundary = globalKeys[index].currentContext?.findRenderObject() as RenderRepaintBoundary?;
-
         if (boundary == null) {
           Get.snackbar(
             'Error',
@@ -159,7 +159,7 @@ class ScannerPageController extends GetxController {
         }
       });
     } catch (e) {
-      print(e);
+      log(e.toString());
       Get.snackbar(
         'Error',
         'Something went wrong: $e',
@@ -168,19 +168,23 @@ class ScannerPageController extends GetxController {
     }
   }
 
-  Future<ResponseModel?> getCardList() async {
+  getCardList({String? orderId}) async {
+    isLoading.value = true;
+    log("orderId: $orderId");
     try {
-      http.Response response = await ApiClient().getRequest(ApiUrls.BASE_URL + ApiUrls.LOGIN);
+      http.Response response = await ApiClient().getRequest("https://django-project-weld.vercel.app/app/orderrow-info/$orderId");
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = json.decode(response.body);
         ResponseModel responseModel = ResponseModel.fromJson(jsonData);
-        return responseModel;
+        responseModelData.value = responseModel;
+        globalKeys.value = List.generate(responseModel.results?.length ?? 0, (index) => GlobalKey());
+        isLoading.value = false;
       } else {
-        print('Failed to fetch data. Status code: ${response.statusCode}');
+        log('Failed to fetch data. Status code: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      log('Error fetching data: $e');
       return null;
     }
   }
@@ -190,16 +194,16 @@ class ScannerPageController extends GetxController {
     Map<String, dynamic> jsonData = json.decode(mockJson);
     ResponseModel responseModel = ResponseModel.fromJson(jsonData);
     responseModelData.value = responseModel;
-    globalKeys.value = List.generate(responseModel.data?.items?.length ?? 0, (index) => GlobalKey());
-    print('Success: ${responseModel.success}');
-    print('Message: ${responseModel.message}');
-    print('Order ID: ${responseModel.data?.orderId}');
-    print('Items:');
-    responseModel.data?.items?.forEach((item) {
-      print('  Item ID: ${item.itemId}');
-      print('  Quantity: ${item.quantity}');
-      print('  Description: ${item.itemDescription}');
-      print('  Pick Area No: ${item.pickArea?.pickAreaNo}');
+    globalKeys.value = List.generate(responseModel.results?.length ?? 0, (index) => GlobalKey());
+    // log('Success: ${responseModel.success}');
+    // log('Message: ${responseModel.message}');
+    // log('Order ID: ${responseModel.data?.orderId}');
+    log('Items:');
+    responseModel.results?.forEach((item) {
+      // log('  Item ID: ${item.itemId}');
+      // log('  Quantity: ${item.quantity}');
+      // log('  Description: ${item.itemDescription}');
+      // log('  Pick Area No: ${item.pickArea?.pickAreaNo}');
     });
   }
 }

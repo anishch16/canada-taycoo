@@ -1,112 +1,147 @@
 class ResponseModel {
-  String? success;
-  String? message;
-  Data? data;
+  int? count;
+  String? next;
+  String? previous;
+  List<ItemData>? results;
 
-  ResponseModel({this.success, this.message, this.data});
+  ResponseModel({this.count, this.next, this.previous, this.results});
 
   ResponseModel.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    message = json['message'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> responseData = <String, dynamic>{};
-    responseData['success'] = success;
-    responseData['message'] = message;
-    if (data != null) {
-      responseData['data'] = data!.toJson();
-    }
-    return responseData;
-  }
-}
-
-class Data {
-  String? orderId;
-  String? planeDate;
-  List<Item>? items;
-
-  Data({this.orderId, this.planeDate, this.items});
-
-  Data.fromJson(Map<String, dynamic> json) {
-    orderId = json['order_id'];
-    planeDate = json['plane_date'];
-    if (json['items'] != null) {
-      items = <Item>[];
-      json['items'].forEach((v) {
-        items!.add(Item.fromJson(v));
+    count = json['count'];
+    next = json['next'];
+    previous = json['previous'];
+    if (json['results'] != null) {
+      results = <ItemData>[];
+      json['results'].forEach((v) {
+        results!.add(ItemData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['order_id'] = orderId;
-    data['plane_date'] = planeDate;
-    if (items != null) {
-      data['items'] = items!.map((v) => v.toJson()).toList();
+    data['count'] = count;
+    data['next'] = next;
+    data['previous'] = previous;
+    if (results != null) {
+      data['results'] = results!.map((v) => v.toJson()).toList();
     }
+    return data;
+  }
+}
+
+class ItemData {
+  int? id;
+  Item? item;
+  OrderHeader? orderHeader;
+  int? quantity;
+
+  ItemData({this.id, this.item, this.orderHeader, this.quantity});
+
+  ItemData.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    item = json['item'] != null ? Item.fromJson(json['item']) : null;
+    orderHeader = json['order_header'] != null
+        ? OrderHeader.fromJson(json['order_header'])
+        : null;
+    quantity = json['quantity'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    if (item != null) {
+      data['item'] = item!.toJson();
+    }
+    if (orderHeader != null) {
+      data['order_header'] = orderHeader!.toJson();
+    }
+    data['quantity'] = quantity;
     return data;
   }
 }
 
 class Item {
-  String? itemId;
-  String? quantity;
+  int? id;
+  PickArea? pickArea;
+  String? itemNumber;
   String? itemDescription;
   String? uom;
   String? smallText;
-  PickArea? pickArea;
 
   Item(
-      {this.itemId,
-        this.quantity,
+      {this.id,
+        this.pickArea,
+        this.itemNumber,
         this.itemDescription,
         this.uom,
-        this.smallText,
-        this.pickArea});
+        this.smallText});
 
   Item.fromJson(Map<String, dynamic> json) {
-    itemId = json['item_id'];
-    quantity = json['quantity'];
-    itemDescription = json['item_description'];
-    uom = json['uom'];
-    smallText = json['small_text'];
+    id = json['id'];
     pickArea = json['pick_area'] != null
         ? PickArea.fromJson(json['pick_area'])
         : null;
+    itemNumber = json['item_number'];
+    itemDescription = json['item_description'];
+    uom = json['uom'];
+    smallText = json['small_text'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['item_id'] = itemId;
-    data['quantity'] = quantity;
-    data['item_description'] = itemDescription;
-    data['uom'] = uom;
-    data['small_text'] = smallText;
+    data['id'] = id;
     if (pickArea != null) {
       data['pick_area'] = pickArea!.toJson();
     }
+    data['item_number'] = itemNumber;
+    data['item_description'] = itemDescription;
+    data['uom'] = uom;
+    data['small_text'] = smallText;
     return data;
   }
 }
 
 class PickArea {
-  String? pickAreaNo;
+  int? id;
+  String? pickAreaNumber;
   String? pickAreaName;
 
-  PickArea({this.pickAreaNo, this.pickAreaName});
+  PickArea({this.id, this.pickAreaNumber, this.pickAreaName});
 
   PickArea.fromJson(Map<String, dynamic> json) {
-    pickAreaNo = json['pick_area_no'];
+    id = json['id'];
+    pickAreaNumber = json['pick_area_number'];
     pickAreaName = json['pick_area_name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['pick_area_no'] = pickAreaNo;
+    data['id'] = id;
+    data['pick_area_number'] = pickAreaNumber;
     data['pick_area_name'] = pickAreaName;
+    return data;
+  }
+}
+
+class OrderHeader {
+  int? id;
+  String? planDate;
+  String? orderNumber;
+
+  OrderHeader({this.id, this.planDate, this.orderNumber});
+
+  OrderHeader.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    planDate = json['plan_date'];
+    orderNumber = json['order_number'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['plan_date'] = planDate;
+    data['order_number'] = orderNumber;
     return data;
   }
 }
