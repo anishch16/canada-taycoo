@@ -1,0 +1,33 @@
+{
+  "success": "true",
+  "message": "fetched successfully",
+  "data":
+  {
+    "order_id": "647768",
+    "plane_date": "9/23/24 0:00",
+    "items": [
+      {
+        "item_id": "44HA-B-CHAN-P112",
+        "quantity": "14",
+        "item_description": "HEIGHT ADJUSTABLE BASE[BRC] CHANNEL,1595mm,SILVER~PAINT",
+        "uom": "EA",
+        "small_text": "Gable/support",
+        "pick_area": {
+          "pick_area_no": "56",
+          "pick_area_name": "56-PPK-FINAL PACK"
+        }
+      },
+      {
+        "item_id": "8540-0555",
+        "quantity": "224",
+        "item_description": "SCREW,#10-32 UNF X 3/4'' FOR COSMO DOOR HINGE & ACCENT SHELF",
+        "uom": "EA",
+        "small_text": "Small hardware",
+        "pick_area": {
+          "pick_area_no": "60",
+          "pick_area_name": "60-PNLHARDWARE"
+        }
+      }
+    ]
+  }
+}
