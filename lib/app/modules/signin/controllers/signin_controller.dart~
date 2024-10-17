@@ -14,7 +14,7 @@ class SigninController extends GetxController {
   //TODO: Implement SigninController
 
   var isLogging = false.obs;
-  var passwordVisible = true.obs;
+  var passwordVisible = false.obs;
   var loginData = SignInResponseModel().obs;
   final localData = GetStorage();
   GlobalKey<FormState> formKey = GlobalKey();

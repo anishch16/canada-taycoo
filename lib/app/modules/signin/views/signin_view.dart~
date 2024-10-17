@@ -114,23 +114,6 @@ class SigninView extends GetView<SigninController> {
               child: Text("Sign In", style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.white)),
             ),
             const SizedBox(height: 16.0),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(Routes.SIGN_UP);
-              },
-              child: Text.rich(
-                  const TextSpan(
-                    text: "Don't have an account? ",
-                    children: [
-                      TextSpan(
-                        text: "Sign up",
-                        style: TextStyle(color: Colors.orange),
-                      ),
-                    ],
-                  ),
-                  style: AppTextTheme.textTheme.titleLarge?.copyWith(color: Colors.black)),
-            ),
-
             const Spacer(flex: 2),
           ],
         ),
