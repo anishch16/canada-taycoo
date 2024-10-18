@@ -1,60 +1,22 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ui' as ui;
-
+import 'dart:ui';
+import 'package:barcode/barcode.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:permission_handler/permission_handler.dart';
-
+import 'package:get_storage/get_storage.dart';
 import '../../../data/remote/api_client.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../data/remote/models/data_success_model.dart';
-
-// class ScannerPageController extends GetxController {
-//   //TODO: Implement ScannerPageController
-//   final count = 0.obs;
-//   var barcode = ''.obs;
-//   var searchByNumber = false.obs;
-//   var qrCode = ''.obs; // Observable variable for QR code
-//   var camState = false.obs; // Observable for camera state
-//   var dirState = false.obs; //// Observable for camera direction
-//   MobileScannerController  mobileScannerController = MobileScannerController();
-//   // void toggleCamera() {
-//   //   camState.value = !camState.value;
-//   // }
-//   //
-//   // void swapBackLightState() async {
-//   //   QrCamera.toggleFlash();
-//   // }
-//
-//   void setBarcode(String value) {
-//     barcode.value = value;
-//   }
-//   void searchNumber(bool value) {
-//     searchByNumber.value = value;
-//   }
-//   @override
-//   void onInit() {
-//     super.onInit();
-//   }
-//
-//   @override
-//   void onReady() {
-//     super.onReady();
-//   }
-//
-//   @override
-//   void onClose() {
-//     super.onClose();
-//   }
-//
-//   void increment() => count.value++;
-// }
+import 'package:printing/printing.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import '../../../data/remote/models/search_record_model.dart';
+import '../../../resources/utils.dart';
+import '../views/printable.dart';
 
 class ScannerPageController extends GetxController {
   var scanResult = Rx<ScanResult?>(null);
@@ -66,6 +28,8 @@ class ScannerPageController extends GetxController {
   var autoEnableFlash = false.obs;
   var globalKeys = [].obs;
   var isLoading = false.obs;
+  var dataNull = false.obs;
+  var isInitial = false.obs;
   final TextEditingController searchController = TextEditingController();
   final flashOnController = TextEditingController(text: 'Flash on');
   final flashOffController = TextEditingController(text: 'Flash off');
@@ -78,11 +42,6 @@ class ScannerPageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // testGetCardList();
-    // globalKeys.clear();
-    // for (var i = 0; i < 1; i++) {
-    //   globalKeys.add(GlobalKey());
-    // }
     _getNumberOfCameras();
   }
 
@@ -109,7 +68,9 @@ class ScannerPageController extends GetxController {
         ),
       );
       scanResult.value = result;
-      getCardList(orderId: scanResult.value!.rawContent.isNotEmpty ? "?search=${scanResult.value!.rawContent}" : "");
+      if (scanResult.value?.type.toString() != "Cancelled") {
+        getCardList(orderId: scanResult.value!.rawContent.isNotEmpty ? "?search=${scanResult.value!.rawContent}" : "");
+      }
     } on PlatformException catch (e) {
       scanResult.value = ScanResult(
         rawContent: e.code == BarcodeScanner.cameraAccessDenied ? 'The user did not grant the camera permission!' : 'Unknown error: $e',
@@ -117,68 +78,71 @@ class ScannerPageController extends GetxController {
     }
   }
 
-  Future<void> requestStoragePermission() async {
-    if (!await Permission.storage.isGranted) {
-      await Permission.storage.request();
+  Future<Uint8List> svgToPng(String svgString, BuildContext context) async {
+    final pictureInfo = await vg.loadPicture(SvgStringLoader(svgString), context);
+    final image = await pictureInfo.picture.toImage(150, 150);
+    final byteData = await image.toByteData(format: ImageByteFormat.png);
+    if (byteData == null) {
+      throw Exception('Unable to convert SVG to PNG');
     }
+    final pngBytes = byteData.buffer.asUint8List();
+    return pngBytes;
   }
 
-  Future<void> capturePng(int index) async {
-    try {
-      await requestStoragePermission();
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        RenderRepaintBoundary? boundary = globalKeys[index].currentContext?.findRenderObject() as RenderRepaintBoundary?;
-        if (boundary == null) {
-          Get.snackbar(
-            'Error',
-            'Render object is null. Unable to capture image.',
-            snackPosition: SnackPosition.BOTTOM,
+  Future<void> printDoc({
+    required String orderText,
+    required String itemText,
+    required String descriptionText,
+    required String colorText,
+    required String plantDateText,
+    required String smallText,
+    required String pickArea,
+    required String quantity,
+  }) async {
+    String svgQrCode = buildBarcodeSvg(Barcode.qrCode(), '$orderText|$itemText');
+    Uint8List qrCodePng = await svgToPng(svgQrCode, Get.context!);
+    final doc = pw.Document();
+    final qrCodeImage = pw.MemoryImage(qrCodePng);
+    doc.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a5,
+        build: (pw.Context context) {
+          return buildPrintableData(
+            image: qrCodeImage,
+            orderText: orderText,
+            itemText: itemText,
+            descriptionText: descriptionText,
+            smallText: smallText,
+            pickArea: pickArea,
+            plantDateText: plantDateText,
+            quantity: quantity,
           );
-          return;
-        }
-
-        ui.Image image = await boundary.toImage();
-        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        Uint8List pngBytes = byteData!.buffer.asUint8List();
-
-        // Save the image to the gallery
-        final result = await ImageGallerySaver.saveImage(pngBytes, quality: 100, name: "screenshot_$index");
-
-        if (result['isSuccess']) {
-          Get.snackbar(
-            'Download Complete',
-            'Image saved to gallery.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
-        } else {
-          Get.snackbar(
-            'Error',
-            'Unable to save image to gallery.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
-        }
-      });
-    } catch (e) {
-      log(e.toString());
-      Get.snackbar(
-        'Error',
-        'Something went wrong: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
+        },
+      ),
+    );
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => doc.save(),
+    );
   }
 
   getCardList({String? orderId}) async {
     isLoading.value = true;
+    isInitial.value = false;
     log("orderId: $orderId");
     try {
-      http.Response response = await ApiClient().getRequest("https://django-project-weld.vercel.app/app/orderrow-info/$orderId");
+      http.Response response = await ApiClient().getRequest("https://django-project-weld.vercel.app/app/orderheader-info/$orderId");
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = json.decode(response.body);
         ResponseModel responseModel = ResponseModel.fromJson(jsonData);
         responseModelData.value = responseModel;
-        globalKeys.value = List.generate(responseModel.results?.length ?? 0, (index) => GlobalKey());
+        await storeSearchRecord(orderId?.split('=')[1] ?? "");
+        globalKeys.value = List.generate(responseModel.data?.firstOrNull?.results?.length ?? 0, (index) => GlobalKey());
         isLoading.value = false;
+        if (responseModel.data!.isEmpty) {
+          dataNull.value = true;
+        } else {
+          dataNull.value = false;
+        }
       } else {
         log('Failed to fetch data. Status code: ${response.statusCode}');
         return null;
@@ -189,21 +153,17 @@ class ScannerPageController extends GetxController {
     }
   }
 
-  void testGetCardList() async {
-    String mockJson = await rootBundle.loadString('assets/json/mock_json.json');
-    Map<String, dynamic> jsonData = json.decode(mockJson);
-    ResponseModel responseModel = ResponseModel.fromJson(jsonData);
-    responseModelData.value = responseModel;
-    globalKeys.value = List.generate(responseModel.results?.length ?? 0, (index) => GlobalKey());
-    // log('Success: ${responseModel.success}');
-    // log('Message: ${responseModel.message}');
-    // log('Order ID: ${responseModel.data?.orderId}');
-    log('Items:');
-    responseModel.results?.forEach((item) {
-      // log('  Item ID: ${item.itemId}');
-      // log('  Quantity: ${item.quantity}');
-      // log('  Description: ${item.itemDescription}');
-      // log('  Pick Area No: ${item.pickArea?.pickAreaNo}');
-    });
+  Future<void> storeSearchRecord(String searchedItemNumber) async {
+    final box = GetStorage();
+    DateTime searchedTime = DateTime.now();
+    SearchRecord newRecord = SearchRecord(
+      searchedItemNumber: searchedItemNumber,
+      searchedTime: searchedTime,
+    );
+    List<dynamic>? searchRecordsJson = box.read<List<dynamic>>('search_table')?.cast<dynamic>();
+    List<SearchRecord> searchRecords =
+        searchRecordsJson == null ? [] : searchRecordsJson.map((jsonString) => SearchRecord.fromJson(json.decode(jsonString))).toList();
+    searchRecords.add(newRecord);
+    await box.write('search_table', searchRecords.map((record) => json.encode(record.toJson())).toList());
   }
 }

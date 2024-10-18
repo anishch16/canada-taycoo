@@ -47,6 +47,8 @@ dependencies:
   image_gallery_saver: ^2.0.3
   barcode_scan2: ^4.3.3
   pulsator: ^1.0.0+2
+  printing: ^5.13.3
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
