@@ -35,7 +35,7 @@ class ScannerPageView extends GetView<ScannerPageController> {
         () => SingleChildScrollView(
           child: Column(
             children: [
-              SearchWidget(),
+              SearchWidget(controller: controller),
               controller.isLoading.value
                   ? const SizedBox(height: 400, child: Center(child: CircularProgressIndicator()))
                   : controller.dataNull.value

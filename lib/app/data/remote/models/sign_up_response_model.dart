@@ -1,10 +1,10 @@
-class SignInResponseModel {
-  String? message;  // To capture the "message" field in the response
-  Token? token;     // To handle the "token" object that contains the "access" token
+class SignUpResponseModel {
+  String? message;
+  Token? token;
 
-  SignInResponseModel({this.message, this.token});
+  SignUpResponseModel({this.message, this.token});
 
-  SignInResponseModel.fromJson(Map<String, dynamic> json) {
+  SignUpResponseModel.fromJson(Map<String, dynamic> json) {
     message = json['message'];
     token = json['token'] != null ? Token.fromJson(json['token']) : null;
   }
@@ -20,17 +20,15 @@ class SignInResponseModel {
 }
 
 class Token {
-  String? access;  // To store the "access" token
-
+  String? access;
   Token({this.access});
-
   Token.fromJson(Map<String, dynamic> json) {
     access = json['access'];
   }
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['access'] = access;
     return data;
   }
 }
+

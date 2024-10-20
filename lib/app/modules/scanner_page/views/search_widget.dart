@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../resources/text_style.dart';
 import '../controllers/scanner_page_controller.dart';
 
 class SearchWidget extends StatelessWidget {
-  const SearchWidget({
+   SearchWidget({
     super.key,
-    required this.controller,
   });
 
-  final ScannerPageController controller;
+  final controller = Get.put(ScannerPageController());
 
   @override
   Widget build(BuildContext context) {

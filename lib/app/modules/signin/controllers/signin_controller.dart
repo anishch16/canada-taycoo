@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 
 import '../../../data/remote/api_client.dart';
-import '../../../data/remote/api_urls.dart';
+import '../../../routes/app_pages.dart';
 import '../models/signin_response_model.dart';
 
 class SigninController extends GetxController {
@@ -17,9 +17,10 @@ class SigninController extends GetxController {
   var passwordVisible = true.obs;
   var loginData = SignInResponseModel().obs;
   final localData = GetStorage();
-  GlobalKey<FormState> formKey = GlobalKey();
+  final signInFormKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
   @override
   void onInit() {
     super.onInit();
@@ -35,17 +36,18 @@ class SigninController extends GetxController {
     super.onClose();
   }
 
-  Future<void> login(String email, String pw) async {
+  Future<void> signIn({required String email, required String password}) async {
     log("Login Tapped");
     isLogging.value = true;
-
-    Map<String, dynamic> requestBody = {"email": email, "password": pw};
-    Future<http.Response> response = ApiClient().postRequestWithoutToken(ApiUrls.BASE_URL + ApiUrls.LOGIN, requestBody);
+    Map<String, dynamic> requestBody = {"email": email, "password": password};
+    Future<http.Response> response = ApiClient().postRequestWithoutToken("https://django-project-weld.vercel.app/user/login/", requestBody);
     response.then((http.Response response) {
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      print("Status code:::: ${response.statusCode}");
+      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 202) {
         SignInResponseModel loginResponseModel = SignInResponseModel.fromJson(jsonDecode(response.body));
-        loginData.value = SignInResponseModel(refresh: loginResponseModel.refresh, access: loginResponseModel.access, user: loginResponseModel.user);
+        loginData.value = SignInResponseModel(message: loginResponseModel.message, token: loginResponseModel.token);
         storeData();
+        Get.offAllNamed(Routes.SCANNER_PAGE);
       } else {
         isLogging.value = false;
       }
@@ -54,16 +56,7 @@ class SigninController extends GetxController {
 
   void storeData() {
     localData.write("isLoggedIn", true);
-    localData.write("access_token", loginData.value.access);
-    localData.write("full_name", loginData.value.user!.fullName);
-    localData.write("email", loginData.value.user!.email);
-    localData.write("hasFilledProfile", loginData.value.user!.hasFilledProfileInfo);
-    if (loginData.value.user!.roles!.contains("HospitalManager") || loginData.value.user!.roles!.contains("HospitalAdmin")) {
-      localData.write("isHospitalManager", true);
-    } else {
-      localData.write("isHospitalManager", false);
-    }
-
+    localData.write("access_token", loginData.value.token?.access);
     Get.rawSnackbar(
         message: "Successfully Logged In",
         backgroundColor: Colors.grey.shade800,
@@ -72,10 +65,5 @@ class SigninController extends GetxController {
         snackPosition: SnackPosition.BOTTOM);
     log("access token:::${localData.read("access_token")}");
     isLogging.value = false;
-    if (loginData.value.user!.hasFilledProfileInfo == false) {
-      // Get.offAll(() => UserDetailFormView(),arguments:0);
-    } else {
-      // Get.offAll(() => BottomNavView());
-    }
   }
 }

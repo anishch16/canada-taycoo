@@ -1,11 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
+import '../../../resources/text_style.dart';
 import '../../../routes/app_pages.dart';
+import '../controllers/scanner_page_controller.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final ScannerPageController controller;
+
   const CustomAppBar({
     super.key,
+    required this.controller,
   });
 
   @override
@@ -34,7 +42,33 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               InkWell(
                 onTap: () {
-                  Get.offAllNamed(Routes.SIGN_UP);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Log Out?"),
+                        content: const Text("Are you sure to log out?"),
+                        actions: [
+                          TextButton(
+                            style: TextButton.styleFrom(
+                                backgroundColor: Colors.white, shape: const StadiumBorder(side: BorderSide(color: Colors.orange))),
+                            child: Text("Cancel", style: AppTextTheme.textTheme.titleMedium?.copyWith(color: Colors.orange)),
+                            onPressed: () {
+                              Get.back(); // Close the dialog
+                            },
+                          ),
+                          TextButton(
+                            style: TextButton.styleFrom(backgroundColor: Colors.orange),
+                            child: Text("Log Out", style: AppTextTheme.textTheme.titleMedium?.copyWith(color: Colors.white)),
+                            onPressed: () async {
+                              await controller.clearData();
+                              Get.offAllNamed(Routes.SIGNIN); // Close the dialog
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: const Icon(
                   Icons.logout,
