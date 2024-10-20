@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:taycoo/app/resources/text_style.dart';
 import '../../../resources/utils.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/history_controller.dart';
 
 class HistoryView extends GetView<HistoryController> {
@@ -24,11 +25,35 @@ class HistoryView extends GetView<HistoryController> {
         actions: [
           if (controller.searchRecordsList.isNotEmpty)
             IconButton(
-              onPressed: () async {
-                final box = GetStorage();
-                await box.write('search_table', []);
-                Get.back();
-                log('Search table cleared');
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Clear History?"),
+                      content: const Text("Once you clear data it won't be recovered"),
+                      actions: [
+                        TextButton(
+                          style: TextButton.styleFrom(backgroundColor: Colors.white,shape: const StadiumBorder(side: BorderSide(color: Colors.orange))),
+                          child:  Text("Cancel",style: AppTextTheme.textTheme.titleMedium?.copyWith(color: Colors.orange)),
+                          onPressed: () {
+                           Get.back(); // Close the dialog
+                          },
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(backgroundColor: Colors.orange),
+                          child:  Text("Proceed",style: AppTextTheme.textTheme.titleMedium?.copyWith(color: Colors.white)),
+                          onPressed: () async {
+                            final box = GetStorage();
+                            await box.write('search_table', []);
+                            log('Search table cleared');
+                            Get.offAllNamed(Routes.SCANNER_PAGE); // Close the dialog
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               icon: Container(
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.deepOrange),

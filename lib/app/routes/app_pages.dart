@@ -8,13 +8,15 @@ import '../modules/sign_up/bindings/sign_up_binding.dart';
 import '../modules/sign_up/views/sign_up_view.dart';
 import '../modules/signin/bindings/signin_binding.dart';
 import '../modules/signin/views/signin_view.dart';
+import '../modules/splash/bindings/splash_binding.dart';
+import '../modules/splash/views/splash_view.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SIGNIN;
+  static const INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
@@ -36,6 +38,11 @@ class AppPages {
       name: _Paths.SIGN_UP,
       page: () => SignUpView(),
       binding: SignUpBinding(),
+    ),
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
     ),
   ];
 }

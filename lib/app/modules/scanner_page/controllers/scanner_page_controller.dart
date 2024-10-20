@@ -26,10 +26,10 @@ class ScannerPageController extends GetxController {
   var selectedCamera = (-1).obs;
   var useAutoFocus = true.obs;
   var autoEnableFlash = false.obs;
-  var globalKeys = [].obs;
   var isLoading = false.obs;
   var dataNull = false.obs;
   var isInitial = false.obs;
+  final localData = GetStorage();
   final TextEditingController searchController = TextEditingController();
   final flashOnController = TextEditingController(text: 'Flash on');
   final flashOffController = TextEditingController(text: 'Flash off');
@@ -125,6 +125,7 @@ class ScannerPageController extends GetxController {
     );
   }
 
+
   getCardList({String? orderId}) async {
     isLoading.value = true;
     isInitial.value = false;
@@ -136,7 +137,6 @@ class ScannerPageController extends GetxController {
         ResponseModel responseModel = ResponseModel.fromJson(jsonData);
         responseModelData.value = responseModel;
         await storeSearchRecord(orderId?.split('=')[1] ?? "");
-        globalKeys.value = List.generate(responseModel.data?.firstOrNull?.results?.length ?? 0, (index) => GlobalKey());
         isLoading.value = false;
         if (responseModel.data!.isEmpty) {
           dataNull.value = true;
@@ -151,6 +151,12 @@ class ScannerPageController extends GetxController {
       log('Error fetching data: $e');
       return null;
     }
+  }
+  Future<void> clearData() async {
+    final box = GetStorage();
+    await localData.write("isLoggedIn", false);
+    await localData.remove("access_token");
+    await box.write('search_table', []);
   }
 
   Future<void> storeSearchRecord(String searchedItemNumber) async {

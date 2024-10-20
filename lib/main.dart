@@ -6,8 +6,7 @@ import 'package:get_storage/get_storage.dart';
 
 import 'app/resources/text_style.dart';
 import 'app/routes/app_pages.dart';
-
-void main() async {
+Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
